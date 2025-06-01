@@ -6,17 +6,17 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
+import org.testng.ITestContext;
+import org.testng.annotations.*;
 import pages.CartPage;
 import pages.LoginPage;
 import pages.ProductsPage;
 import utils.PropertyReader;
+import utils.TestListener;
 
 import java.util.concurrent.TimeUnit;
 
+@Listeners(TestListener.class)
 public class BaseTest {
     public WebDriver driver;
     LoginPage loginPage;
@@ -27,20 +27,22 @@ public class BaseTest {
 
     @Parameters({"browser"})
     @BeforeMethod
-        public void setup(@Optional("chrome") String browser) {
+    @Step("1")
+    public void setup(@Optional("chrome") String browser, ITestContext context) {
         if (browser.equalsIgnoreCase("chrome")) {
             WebDriverManager.chromedriver().setup();
             ChromeOptions options = new ChromeOptions();
             options.addArguments("start-maximized");
             options.addArguments("--guest");
-            //options.addArguments("headless");
+            options.addArguments("headless");
             driver = new ChromeDriver(options);
         } else if (browser.equalsIgnoreCase("edge")) {
             WebDriverManager.edgedriver().setup();
             driver = new EdgeDriver();
         }
 
-        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        context.setAttribute("driver", driver);
         loginPage = new LoginPage(driver);
         productsPage = new ProductsPage(driver);
         cartPage = new CartPage(driver);
@@ -50,8 +52,10 @@ public class BaseTest {
         password = PropertyReader.getProperty("saucedemmmo.password");
     }
 
-    @AfterMethod()
-    public void close(){;
-    /*driver.close();*/
+
+    @Step("Закрытие")
+    @AfterMethod
+    public void close() {
+        driver.quit();
     }
 }

@@ -1,55 +1,58 @@
 package tests;
 
+import com.google.j2objc.annotations.Property;
+import enums.DepartmentNaming;
+import io.qameta.allure.*;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import user.UserFactory;
 
+import static enums.DepartmentNaming.PRODUCTS;
 import static org.testng.Assert.*;
-import static org.testng.Assert.assertTrue;
 
 public class LoginTest extends BaseTest {
-    @Test(enabled = true)
-    public void correctLogin() {
-        loginPage.open();
-        loginPage.login(UserFactory.withAdminPermission());
-        /*loginPage.login("standard_user", "secret_sauce");
-        productsPage.boo();*/
-        assertTrue(productsPage.titleIsDisplayed());
-        assertEquals(productsPage.getTitle(), "Products");
-        //productsPage.addToCart("Sauce Labs Backpack");
 
+    @Epic("Модуль логина интернет магазина")
+    @Feature("Юридические лица")
+    @Story("MMM")
+    @Severity(SeverityLevel.BLOCKER)
+    @Property("Приоритетность исправления")
+    @Owner("Natalia Vasileva, adxomyak13@yandex.ru")
+    @TmsLink("IFAT4")
+    @Issue("1")
+    @Test(description = "проверка верной авторизации")
+    public void correctLogin() {
+        loginPage.open()
+                .login(UserFactory.withAdminPermission());
+        assertTrue(productsPage.titleIsDisplayed());
+        assertEquals(productsPage.getTitle(), PRODUCTS.getDisplayName());
     }
+
 
     @DataProvider(name = "incorrectLoginDate")
     public Object[][] loginData() {
         return new Object[][]{
-                {"locked_out_user", "secret_sauce", "Epic sadface: You can only access '/cart.html' when you are logged in."},
-                {"", "secret_sauce", "Epic sadface: You can only access '/cart.html' when you are logged in."},
-                {"standard_user","", "Epic sadface: You can only access '/cart.html' when you are logged in."}
+                {"locked_out_user", "secret_sauce", "Epic sadface: Sorry, this user has been locked out."},
+                {"", "secret_sauce", "Epic sadface: Username is required"},
+                {"standard_user", "123", "Epic sadface: Username and password do not match any user in this service"}
         };
     }
 
-    @Test(dataProvider = "incorrectLoginDate")
-    public void incorrectLogin(String user, String pass, String errorMsg) {
-        loginPage.open();
-        loginPage.login(user, pass);
+    @Epic("Модуль логина интернет магазина")
+    @Feature("Юридические лица")
+    @Story("MMM")
+    @Severity(SeverityLevel.BLOCKER)
+    @Property("Приоритетность исправления")
+    @Owner("Natalia Vasileva, adxomyak13@yandex.ru")
+    @TmsLink("IFAT4")
+    @Issue("1")
+    @Test(dataProvider = "incorrectLoginDate", description = "проверка невалидных данных входа")
+    public void incorrectLoginDate(String user, String pass, String errorMsg) {
+        loginPage
+                .open()
+                .fillLoginInput(user)
+                .fillPasswordInput(pass)
+                .clickSubmitBtn();
         assertEquals(loginPage.getErrorMsg(), errorMsg);
     }
 }
-
-  /*  @Test
-    public void emptydLogin() {
-        loginPage.open();
-        loginPage.login("", "secret_sauce");
-        assertEquals(loginPage.getErrorMsg(), "Epic sadface: Username is required");
-    }
-
-    @Test
-    public void emptyLoginPassword() {
-        loginPage.open();
-        loginPage.login("standard_user", "");
-        assertEquals(loginPage.getErrorMsg(), "Epic sadface: Password is required");
-
-    }
-}*/
-

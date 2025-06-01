@@ -7,45 +7,44 @@ import user.User;
 
 public class LoginPage extends BasePage {
     private static final By USERNAME_INPUT = By.id("user-name");
-    private static final By PASSWORD_INPUT = By.id("password");
+    private static final By PASSWORD_INPUT = By.xpath("//*[@data-test ='password']");
     private static final By LOGIN_BUTTON = By.id("login-button");
-    private By errorSign = By.xpath("//*[@data-test='error']");
+    private final By errorSing = By.xpath("//*[@data-test = 'error']");
 
     public LoginPage(WebDriver driver) {
         super(driver);
     }
 
-    public void open() {
-        driver.get(BASE_URL + "cart.html");
+    @Step("Открытие браузера")
+    public LoginPage open() {
+        driver.get(BASE_URL);
+        return this;
     }
 
-    public void login(User user) {
+    @Step("Ввод данных пльзователя")
+    public LoginPage login(User user) {
         fillLoginInput(user.getEmail());
         fillPasswordInput(user.getPassword());
         clickSubmitBtn();
+        return this;
     }
 
-    public void fillLoginInput(String user) {
+    public LoginPage fillLoginInput(String user) {
         driver.findElement(USERNAME_INPUT).sendKeys(user);
+        return this;
     }
 
-    public void fillPasswordInput(String password) {
-        CharSequence pass;
+    public LoginPage fillPasswordInput(String password) {
         driver.findElement(PASSWORD_INPUT).sendKeys(password);
+        return this;
     }
 
-    public void clickSubmitBtn() {
+    public LoginPage clickSubmitBtn() {
         driver.findElement(LOGIN_BUTTON).submit();
+        return this;
     }
 
     public String getErrorMsg() {
-        return driver.findElement(errorSign).getText();
-    }
-
-    public void addToCart(int index) {
-        driver.findElements(By.xpath("//*[text()='Add to cart']")).get(index).click();
-    }
-
-    public void login(String user, String pass) {
+        return driver.findElement(errorSing).getText();
     }
 }

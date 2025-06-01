@@ -9,10 +9,11 @@ import java.time.Duration;
 public abstract class BasePage {
     WebDriver driver;
     WebDriverWait wait;
+
     public static final String BASE_URL = PropertyReader.getProperty("saucedemmmo.url");
 
     public BasePage(WebDriver driver) {
-        this.driver = driver;//не было
+        this.driver = driver;
         wait = new WebDriverWait(driver, Duration.ofSeconds(20));
     }
 }
